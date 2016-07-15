@@ -64,7 +64,40 @@ articleView.setTeasers = function() {
     }
   });
 };
+//Defaine a function to
+articleView.initNewArticlePage = function() {
+  $('#export-field').hide();
+  $('#article-json').on('focus',function(){
+    $(this).select();
+  });
+  $('#new-form').on('change', articleView.create);
+};
 
+articleView.create = function(){
+  $('#article-preview').empty().fadeIn();
+
+  var formArticle = new Article({
+    title: $('#article-title').val(),
+    body: $('#article-body').val(),
+    author: $('#article-author').val(),
+    authorUrl: $('#article-author-url').val(),
+    category: $('#article-category').val(),
+    //if checked will be 1 but if it is false will be a null
+    publishedOn: $('#article-published:checked').length ? new Date() : null
+  });
+  $('#article-preview').append(formArticle.toHtml('#article-template'));
+//next function will find it ready in highlight js website
+  $('pre code').each(function(index, block) {
+    hljs.highlightBlock(block);
+  });
+  $('#export-field').show();
+  //will generate the resulting jason to each element
+  //and set what the value is
+  //json take formArticle object and turn it to string
+  $('#article-json').val(JSON.stringify(formArticle));
+};
+
+articleView.initNewArticlePage();
 articleView.render();
 articleView.handleCategoryFilter();
 articleView.handleAuthorFilter();
