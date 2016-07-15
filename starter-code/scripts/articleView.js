@@ -65,6 +65,34 @@ articleView.setTeasers = function() {
   });
 };
 
+articleView.initNewArticlePage = function() {
+  $('#export-field').hide();
+  $('#article-json').on('focus', function() {
+    $(this).select();
+  });
+  $('#new_form').on('change', articleView.create);
+};
+
+articleView.create = function() {
+  $('#article-preview').empty().fadeIn();
+  var formArticle = new Article({
+    title: $('#article_title').val(),
+    body: $('#article_body').val(),
+    author: $('#article_author').val(),
+    authorUrl: $('#article_author_url').val(),
+    category: $('#article_category').val(),
+    publishedOn: $('#article_published:checked').length ? new Date() : null
+  });
+  $('#article-preview').append(formArticle.toHtml('#article-template'));
+  //this next bit comes from highlight.js documentation, look it up if you want to understand it a bit better
+  $('pre code').each(function(index, block) {
+    hljs.highlightBlock(block);
+  });
+  $('#export-field').show();
+  $('#article-json').val(JSON.stringify(formArticle));
+};
+
+articleView.initNewArticlePage();
 articleView.render();
 articleView.handleCategoryFilter();
 articleView.handleAuthorFilter();
