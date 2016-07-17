@@ -2,11 +2,11 @@
 var articleView = {};
 
 articleView.render = function() {
-  articles.forEach(function(a) {
-    $('#articles').append(a.toHtml('#article-template'));
-    $('#author-filter').append(a.toHtml('#author-filter-template'));
-    if($('#category-filter option:contains("'+ a.category + '")').length === 0) {
-      $('#category-filter').append(a.toHtml('#category-filter-template'));
+  articles.forEach(function(article) {
+    $('#articles').append(article.toHtml('#article-template'));
+    $('#author-filter').append(article.toHtml('#author-filter-template'));
+    if($('#category-filter option:contains("'+ article.category + '")').length === 0) {
+      $('#category-filter').append(article.toHtml('#category-filter-template'));
     };
   });
   $('pre code').each(function(i, block) {
@@ -65,6 +65,38 @@ articleView.setTeasers = function() {
   });
 };
 
+articleView.initNewArticlePage = function () {
+  $('#export-field').hide();
+  $('#article-json').on('focus', function() {
+    $(this).select();
+  });
+  $('#new-form').on('change', articleView.create);
+};
+
+articleView.create = function() {
+  $('#article-preview').empty().fadeIn();
+
+  var formArticle = new Article({
+    title: $('#article-title').val(),
+    body: $('#article-body').val(),
+    author: $('#article-author').val(),
+    authorUrl: $('#article-author-url').val(),
+    category: $('#article-category').val(),
+    publishedOn: $('#article-published:checked').length ? new Date() : null
+  });
+
+  $('#article-preview').append(formArticle.toHtml('#article-template'));
+
+  $('pre code').each(function (index, block) { //from highlightjs example.
+    hljs.highlightBlock(block);
+  });
+
+  $('#export-field').show();
+  $('#article-json').val(JSON.stringify(formArticle));
+
+};
+
+articleView.initNewArticlePage();
 articleView.render();
 articleView.handleCategoryFilter();
 articleView.handleAuthorFilter();
